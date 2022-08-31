@@ -9,22 +9,26 @@ fetch(`http://localhost:3000/api/products/${meubleId}`)
     const meubleDescription = document.getElementById("description");
     const meublePrice = document.getElementById("price");
     const meubleColors = document.getElementById("colors");
+    const imageDisplay = document.createElement("img");
+    const imageMeuble = document.querySelector(".item__img");
     const colors = meuble.colors;
-    
+
     meubleTitle.innerHTML = meuble.name;
     meubleDescription.innerHTML = meuble.description;
     meublePrice.innerHTML = meuble.price;
 
+    imageDisplay.src = meuble.imageUrl;
+    imageDisplay.alt = meuble.altTxt;
+
+    if (imageMeuble != null) {
+      imageMeuble.append(imageDisplay);
+    }
+
     colors.forEach((color) => {
-        const option = document.createElement('option')
-  
-        option.setAttribute('value', color)
-        option.innerHTML = color
-        meubleColors.append(option)
-      })
-    
+      const option = document.createElement("option");
 
-    // const elt = document.getElementById("items");
-
-    // elt.innerHTML = `<ul>${colorsInnerHtmlListElements}</ul>`;
+      option.setAttribute("value", color);
+      option.innerHTML = color;
+      meubleColors.append(option);
+    });
   });
