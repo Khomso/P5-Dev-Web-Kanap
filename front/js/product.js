@@ -30,12 +30,21 @@ fetch(`http://localhost:3000/api/products/${meubleId}`)
       const meubleColorsSelect = document.getElementById("colors");
       const colorValue =
         meubleColorsSelect.options[meubleColorsSelect.selectedIndex].value;
-    
-      cart.items.push({
-        quantity: meubleQuantity,
-        color: colorValue,
-        itemId: meubleId,
-      });
+
+        const itemFound = cart.items.find((item) => {
+          return item.itemId === meubleId && item.color === colorValue // répérer un éléments dans le tableau avec la même couleur et
+        })
+        
+        if (itemFound) {
+          itemFound.quantity += Number(meubleQuantity) 
+        } else {
+          cart.items.push({
+            quantity: Number(meubleQuantity),
+            color: colorValue,
+            itemId: meubleId,
+          });
+        }
+        
       localStorage.setItem(cartLocalStorageKey, JSON.stringify(cart));
     });
 
@@ -58,3 +67,4 @@ fetch(`http://localhost:3000/api/products/${meubleId}`)
       meubleColors.append(option);
     });
   });
+
