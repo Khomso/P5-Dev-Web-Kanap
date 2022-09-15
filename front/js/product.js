@@ -1,5 +1,5 @@
 const searchParams = new URLSearchParams(window.location.search);
-const meubleId = searchParams.get("id"); 
+const meubleId = searchParams.get("id"); // on récupère les Id dans la page web
 const cartLocalStorageKey = "cart";
 const cartFromLocalStorage = localStorage.getItem(cartLocalStorageKey);
 let cart = {
@@ -9,13 +9,12 @@ let cart = {
 if (cartFromLocalStorage) {
   cart = JSON.parse(cartFromLocalStorage);
 } else {
-  localStorage.setItem(cartLocalStorageKey, JSON.stringify(cart));
+  localStorage.setItem(cartLocalStorageKey, JSON.stringify(cart)); // update du local storage 
 }
 
 fetch(`http://localhost:3000/api/products/${meubleId}`)
   .then((res) => res.json())
   .then((meuble) => {
-    console.log(meuble);
     const meubleTitle = document.getElementById("title");
     const meubleDescription = document.getElementById("description");
     const meublePrice = document.getElementById("price");
@@ -42,6 +41,7 @@ fetch(`http://localhost:3000/api/products/${meubleId}`)
           quantity: Number(meubleQuantity),
           color: colorValue,
           itemId: meubleId,
+          price : meuble.price,
         });
       }
 

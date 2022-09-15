@@ -4,11 +4,11 @@
 fetch("http://localhost:3000/api/products")
   .then((res) => res.json())
   .then((data) => {
-    console.log(data);
-    const meubles = data;
-    let meublesInnerHtmlListElements = "";
+    const meubles = data; // on place les données dans une constante
+    let meublesInnerHtmlListElements = ""; // création d'une variable vide pour l'injecter dans le html par la suite
 
     meubles.forEach((meuble) => {
+      // boucle for each pour recup chaque éléments
       meublesInnerHtmlListElements += `
         <a href="./product.html?id=${meuble._id}">
             <article>
@@ -19,7 +19,7 @@ fetch("http://localhost:3000/api/products")
         </a> `;
     });
 
-    const elt = document.getElementById("items");
+    const elt = document.getElementById("items"); // on récupère l'id dans le html
 
-    elt.innerHTML = `<ul>${meublesInnerHtmlListElements}</ul>`;
+    elt.innerHTML = `<ul>${meublesInnerHtmlListElements}</ul>`; // on l'injecte dans le html avc la propriété "inner"
   });
