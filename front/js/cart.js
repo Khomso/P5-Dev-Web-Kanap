@@ -11,30 +11,11 @@ if (cartFromLocalStorage) {
 } else {
   localStorage.setItem(cartLocalStorageKey, JSON.stringify(cart));
 }
-console.log(cart);
 
 // mise a jour local storage
 function updateLocalStorage() {
   localStorage.setItem(cartLocalStorageKey, JSON.stringify(cart));
 }
-
-// function addItem(id, color, price) {
-//   const itemFound = cart.items.find((cartItem) => {
-//     return cartItem.item.itemId === id && cartItem.item.color === color;
-//   }); // récherche un éléments avec la même id et même couleur
-
-//   if (itemFound) {
-//     itemFound.quantity += 1; // si on a déja l'élement on ajoute 1
-//   } else {
-//     cart.items.push({
-//       itemId: id,
-//       color: color,
-//       price: price,
-//       quantity: 1,
-//     }); // sinon on ajoute les éléments dans le tableau
-//   }
-//   updateLocalStorage(); // mise a jour local storage
-// }
 
 // partie importante !!!
 // liaison des contrôles sur les éléments html
@@ -52,23 +33,39 @@ function bindControls(item) {
       });
       const inputQuantityControlElement =
         element.getElementsByClassName("itemQuantity")[0];
-
+     
       // click listener sur le bouton de modification des quantités
-
       inputQuantityControlElement.addEventListener("change", (evt) => {
-        // cart__item__content__settings__quantity
         const quantityTextElt = element.querySelector(
           ".cart__item__content__settings__quantity p"
         );
+        const priceTextElt = element.querySelectorAll(
+          ".cart__item__content__description p"
+        )[1];
+        
         // mise a jour du nombre d'item
         itemInCart.quantity = parseInt(evt.target.value, 10);
         // mise a jour de la valeur "quantity"
         quantityTextElt.innerHTML = `Qté : ${itemInCart.quantity}`;
-        // recup l'élément du prix
-        // recup modifier le prix
+        // mettre a jour le prix
+        priceTextElt.innerHTML = `${itemInCart.price * itemInCart.quantity} €`;
         //mise a jour du local storage
         updateLocalStorage();
       });
+      // suppression de l'éléments
+      // 
+      const deleteItemButton = element.querySelector(".deleteItem");
+
+      deleteItemButton.addEventListener("click", (evt) => {
+          cart.items = cart.items.filter(
+            (cartItem) =>
+              cartItem.itemId !== itemInCart.itemId || cartItem.color !== itemInCart.color // filtrage de l'élément à supprimer
+          );
+          // cartItemDisplay.removeChild(element); // supression de l'élément dans l'interface
+          element.remove(); // supression de l'élément dans l'interface
+          updateLocalStorage();
+      })
+
     }
   }
 }
@@ -103,20 +100,13 @@ if (cartItemDisplay) {
           <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${
             item.quantity
           }">
+          <div class="cart__item__content__settings__delete">
+            <p class="deleteItem">Supprimer</p>
+          </div>
         </div>
         </div>
         </article>  
         `;
-        deleteItemButton.addEventListener("click", () => {
-          cart.items = cart.items.filter(
-            (cartItem) => 
-               cartItem.itemId !== item.itemId || cartItem.color !== item.color // filtrage de l'élément à supprimer
-          );
-          updateLocalStorage(); // mise a jour local storage
-
-          cartItemDisplay.removeChild(itemDisplay); // supression de l'élément dans l'interface
-        });
-        itemDisplay.appendChild(deleteItemButton); //ajout du bouton à l'élément en cours
         cartItemDisplay.appendChild(itemDisplay); // ajout de l'élément en cours
         bindControls(item); //liaison des contrôles de l'élement en cours
       });
@@ -128,3 +118,34 @@ const deleteAllItem = () => {
 };
 
 // mettre a jour le prix et prix total
+
+// Prix total du panier article
+
+// const totalPriceBasket = [] ; // constante pour pouvoir mettre les prix dans un tableau
+
+// if (produitLocalStorage[z].id === produitLocalStorage[z].id) {
+
+// const articleTotal =
+// produitLocalStorage[z].quantity * lot[v].price;
+
+// totalPriceBasket.push(articleTotal);
+
+// const reducer = (accumulator, curr) => accumulator + curr;
+// const totalPrix = totalPriceBasket.reduce(reducer);
+
+// let htmlPrix = document.querySelector("#totalPrice");
+// htmlPrix.innerHTML = `${totalPrix}`;
+// }
+console.log(cart);
+console.log(cart.items);
+
+function TotalPriceBasket(item) {
+  let total = 0;
+  const totalPrice = document.querySelector("#totalPrice");
+
+  cart.items.forEach((item) => {
+    const totalUnitPrice = item.price * item.quantity;
+    total += totalUnitPrice;
+  });
+
+}
