@@ -17,9 +17,23 @@ function updateLocalStorage() {
   localStorage.setItem(cartLocalStorageKey, JSON.stringify(cart));
 }
 
-// partie importante !!!
-// liaison des contrôles sur les éléments html
+// calcul du prix du panier
+function updatePriceBasket() {
+  let total = 0;
+  let quantity = 0;
+  const totalPrice = document.querySelector("#totalPrice");
+  const totalQuantity = document.querySelector("#totalQuantity");
 
+  cart.items.forEach((item) => {
+    const totalUnitPrice = item.price * item.quantity;
+    total += totalUnitPrice;
+    quantity += item.quantity;
+  });
+  totalQuantity.innerHTML = `${quantity}`;
+  totalPrice.innerHTML = `${total}`;
+}
+
+// liaison des contrôles sur les éléments html
 function bindControls(item) {
   const elements = document.getElementsByClassName("cart__item");
 
@@ -33,7 +47,7 @@ function bindControls(item) {
       });
       const inputQuantityControlElement =
         element.getElementsByClassName("itemQuantity")[0];
-     
+
       // click listener sur le bouton de modification des quantités
       inputQuantityControlElement.addEventListener("change", (evt) => {
         const quantityTextElt = element.querySelector(
@@ -42,7 +56,7 @@ function bindControls(item) {
         const priceTextElt = element.querySelectorAll(
           ".cart__item__content__description p"
         )[1];
-        
+
         // mise a jour du nombre d'item
         itemInCart.quantity = parseInt(evt.target.value, 10);
         // mise a jour de la valeur "quantity"
@@ -51,21 +65,25 @@ function bindControls(item) {
         priceTextElt.innerHTML = `${itemInCart.price * itemInCart.quantity} €`;
         //mise a jour du local storage
         updateLocalStorage();
+        // mise a jour du prix du panier
+        updatePriceBasket();
       });
       // suppression de l'éléments
-      // 
+      //
       const deleteItemButton = element.querySelector(".deleteItem");
 
       deleteItemButton.addEventListener("click", (evt) => {
-          cart.items = cart.items.filter(
-            (cartItem) =>
-              cartItem.itemId !== itemInCart.itemId || cartItem.color !== itemInCart.color // filtrage de l'élément à supprimer
-          );
-          // cartItemDisplay.removeChild(element); // supression de l'élément dans l'interface
-          element.remove(); // supression de l'élément dans l'interface
-          updateLocalStorage();
-      })
-
+        cart.items = cart.items.filter(
+          (cartItem) =>
+            cartItem.itemId !== itemInCart.itemId ||
+            cartItem.color !== itemInCart.color // filtrage de l'élément à supprimer
+        );
+        // cartItemDisplay.removeChild(element); // supression de l'élément dans l'interface
+        element.remove(); // supression de l'élément dans l'interface
+        updateLocalStorage();
+        // mise a jour du prix du panier
+        updatePriceBasket();
+      });
     }
   }
 }
@@ -109,43 +127,45 @@ if (cartItemDisplay) {
         `;
         cartItemDisplay.appendChild(itemDisplay); // ajout de l'élément en cours
         bindControls(item); //liaison des contrôles de l'élement en cours
+        // mise a jour du prix du panier
+        updatePriceBasket();
       });
   });
 }
-const deleteAllItem = () => {
-  localStorage.clear();
-  location.reload();
-};
 
-// mettre a jour le prix et prix total
+// Formulaire
 
-// Prix total du panier article
+const orderButton = document.getElementById("order"); // on cible le button commander
 
-// const totalPriceBasket = [] ; // constante pour pouvoir mettre les prix dans un tableau
-
-// if (produitLocalStorage[z].id === produitLocalStorage[z].id) {
-
-// const articleTotal =
-// produitLocalStorage[z].quantity * lot[v].price;
-
-// totalPriceBasket.push(articleTotal);
-
-// const reducer = (accumulator, curr) => accumulator + curr;
-// const totalPrix = totalPriceBasket.reduce(reducer);
-
-// let htmlPrix = document.querySelector("#totalPrice");
-// htmlPrix.innerHTML = `${totalPrix}`;
-// }
-console.log(cart);
-console.log(cart.items);
-
-function TotalPriceBasket(item) {
-  let total = 0;
-  const totalPrice = document.querySelector("#totalPrice");
-
-  cart.items.forEach((item) => {
-    const totalUnitPrice = item.price * item.quantity;
-    total += totalUnitPrice;
-  });
-
-}
+orderButton.addEventListener("click", (evt) => {
+  evt.preventDefault();
+  if (cart.items.length == 0) {
+    alert(" Veuillez selectionner les articles a commander ! ");
+    return;
+  }
+  const form = document.querySelector(".cart__order__form");
+  const firstName = form.elements.firstName.value;
+  const lastName = form.elements.lastName.value;
+  const address = form.elements.address.value;
+  const city = form.elements.city.value;
+  const email = form.elements.email.value;
+  const formBody = {
+    contact: {
+      firstName: firstName,
+      lastName: lastName,
+      address: address,
+      city: city,
+      email: email,
+    },
+    products: cart.items.map((item) => item.itemId),
+  };
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    body: JSON.stringify(formBody),
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+    },
+  })
+    .then((res) => res.json())
+    .then((dataForm) => console.log(dataForm));
+});
