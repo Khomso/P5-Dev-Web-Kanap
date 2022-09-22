@@ -167,5 +167,5 @@ orderButton.addEventListener("click", (evt) => {
     },
   })
     .then((res) => res.json())
-    .then((dataForm) => console.log(dataForm));
+    .then((dataForm) => window.location.href = `/front/html/confirmation.html?orderId=${dataForm.orderId}`);
 });
