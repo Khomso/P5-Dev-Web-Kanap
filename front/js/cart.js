@@ -6,6 +6,8 @@ const cartItemDisplay = document.getElementById("cart__items");
 let cart = {
   items: [],
 };
+const articlePriceById = {};// on ajoute un objet pour recup le prix
+
 if (cartFromLocalStorage) {
   cart = JSON.parse(cartFromLocalStorage);
 } else {
@@ -25,7 +27,8 @@ function updatePriceBasket() {
   const totalQuantity = document.querySelector("#totalQuantity");
 
   cart.items.forEach((item) => {
-    const totalUnitPrice = item.price * item.quantity;
+    // const totalUnitPrice = item.price * item.quantity;
+    const totalUnitPrice = articlePriceById[item.id] * item.quantity; 
     total += totalUnitPrice;
     quantity += item.quantity;
   });
@@ -62,7 +65,9 @@ function bindControls(item) {
         // mise a jour de la valeur "quantity"
         quantityTextElt.innerHTML = `Qté : ${itemInCart.quantity}`;
         // mettre a jour le prix
-        priceTextElt.innerHTML = `${itemInCart.price * itemInCart.quantity} €`;
+        priceTextElt.innerHTML = `${
+          articlePriceById[itemInCart.id] * itemInCart.quantity
+        } €`;
         //mise a jour du local storage
         updateLocalStorage();
         // mise a jour du prix du panier
@@ -97,7 +102,8 @@ if (cartItemDisplay) {
         const deleteItemButton = document.createElement("div");
 
         // on recupère le prix depuis l'article
-        item.price = article.price
+        // item.price = article.price
+        articlePriceById[article.id] = article.price;
 
         deleteItemButton.className = "cart__item__content__settings__delete";
         deleteItemButton.innerHTML = `<p class="deleteItem">Supprimer</p>`; // création button affichage
