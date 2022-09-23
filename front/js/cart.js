@@ -17,7 +17,7 @@ function updateLocalStorage() {
   localStorage.setItem(cartLocalStorageKey, JSON.stringify(cart));
 }
 
-// calcul du prix du panier
+// calcul du prix du panier et des articles
 function updatePriceBasket() {
   let total = 0;
   let quantity = 0;
@@ -133,39 +133,106 @@ if (cartItemDisplay) {
   });
 }
 
-// Formulaire
+// **************** Formulaire********************************
 
 const orderButton = document.getElementById("order"); // on cible le button commander
 
 orderButton.addEventListener("click", (evt) => {
-  evt.preventDefault();
+  evt.preventDefault(); // on évite le rafraichissement de la page
   if (cart.items.length == 0) {
     alert(" Veuillez selectionner les articles a commander ! ");
     return;
+  } // oblige le visiteur a selectionné un article
+
+  const form = document.querySelector(".cart__order__form"); // on cible le formulaire
+
+  function controlFirstName() {
+    const firstName = form.elements.firstName.value;
+    if (/^[A-Za-z]{3,20}$/.test(firstName)) {
+      return true;
+    } else {
+      const firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+      firstNameErrorMsg.innerHTML =
+        "Chiffre et symbole ne sont pas autorisé.Ne pas dépasser 20 caractères, minimum 3 caractères.";
+      return false;
+    }
   }
-  const form = document.querySelector(".cart__order__form");
-  const firstName = form.elements.firstName.value;
-  const lastName = form.elements.lastName.value;
-  const address = form.elements.address.value;
-  const city = form.elements.city.value;
-  const email = form.elements.email.value;
-  const formBody = {
-    contact: {
-      firstName: firstName,
-      lastName: lastName,
-      address: address,
-      city: city,
-      email: email,
-    },
-    products: cart.items.map((item) => item.itemId),
-  };
-  fetch("http://localhost:3000/api/products/order", {
-    method: "POST",
-    body: JSON.stringify(formBody),
-    headers: {
-      "Content-Type": "application/json;charset=utf-8",
-    },
-  })
-    .then((res) => res.json())
-    .then((dataForm) => window.location.href = `/front/html/confirmation.html?orderId=${dataForm.orderId}`);
+  function controlLastName() {
+    const lastName = form.elements.lastName.value;
+    if (/^[A-Za-z]{3,20}$/.test(lastName)) {
+      return true;
+    } else {
+      const lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+      lastNameErrorMsg.innerHTML =
+        "Chiffre et symbole ne sont pas autorisé.Ne pas dépasser 20 caractères, minimum 3 caractères.";
+      return false;
+    }
+  }
+  function controlAdress() {
+    const address = form.elements.address.value;
+    if (/^[0-9A-Za-zÀ-ÖØ-öø-ÿ' -,.]+$/.test(address)) {
+      return true;
+    } else {
+      const addressErrorMsg = document.getElementById("addressErrorMsg");
+      addressErrorMsg.innerHTML = "Veuillez renseigner votre adresse.";
+      return false;
+    }
+  }
+  function controlCity() {
+    const city = form.elements.city.value;
+    if (/^[A-Za-z]{3,20}$/.test(city)) {
+      return true;
+    } else {
+      const cityErrorMsg = document.getElementById("cityErrorMsg");
+      cityErrorMsg.innerHTML =
+        "Chiffre et symbole ne sont pas autorisé.Ne pas dépasser 20 caractères, minimum 3 caractères.";
+      return false;
+    }
+  }
+  function controlEmail() {
+    const email = form.elements.email.value;
+    if (/^[a-z0_9._-]+@[a-z0_9._-]{2,}\.[a-z]{2,4}$/.test(email)) {
+      return true;
+    } else {
+      const emailErrorMsg = document.getElementById("emailErrorMsg");
+      emailErrorMsg.innerHTML = "Veuillez renseigner une adresse mail.";
+      return false;
+    }
+  }
+  if (
+    controlFirstName() &&
+    controlLastName() &&
+    controlAdress() &&
+    controlCity() &&
+    controlEmail()
+  ) {
+    const firstName = form.elements.firstName.value;
+    const lastName = form.elements.lastName.value;
+    const address = form.elements.address.value;
+    const city = form.elements.city.value;
+    const email = form.elements.email.value;
+    const formBody = {
+      contact: {
+        firstName: firstName,
+        lastName: lastName,
+        address: address,
+        city: city,
+        email: email,
+      },
+      products: cart.items.map((item) => item.itemId),
+    };
+
+    fetch("http://localhost:3000/api/products/order", {
+      method: "POST",
+      body: JSON.stringify(formBody),
+      headers: {
+        "Content-Type": "application/json;charset=utf-8",
+      },
+    })
+      .then((res) => res.json())
+      .then(
+        (dataForm) =>
+          (window.location.href = `/front/html/confirmation.html?orderId=${dataForm.orderId}`)
+      );
+  }
 });
