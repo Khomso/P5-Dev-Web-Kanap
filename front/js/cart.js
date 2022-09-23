@@ -92,9 +92,12 @@ if (cartItemDisplay) {
   cart.items.forEach((item) => {
     fetch(`http://localhost:3000/api/products/${item.itemId}`)
       .then((res) => res.json())
-      .then((sofa) => {
+      .then((article) => {
         const itemDisplay = document.createElement("item");
         const deleteItemButton = document.createElement("div");
+
+        // on recupère le prix depuis l'article
+        item.price = article.price
 
         deleteItemButton.className = "cart__item__content__settings__delete";
         deleteItemButton.innerHTML = `<p class="deleteItem">Supprimer</p>`; // création button affichage
@@ -104,13 +107,13 @@ if (cartItemDisplay) {
           item.color
         }">
         <div class="cart__item__img">
-          <img src="${sofa.imageUrl}" alt="${sofa.altTxt}">
+          <img src="${article.imageUrl}" alt="${article.altTxt}">
         </div>
         <div class="cart__item__content">
         <div class="cart__item__content__description">
-            <h2>${sofa.name}</h2>
+            <h2>${article.name}</h2>
             <p>${item.color}</p>
-            <p>${sofa.price * item.quantity} €</p>
+            <p>${article.price * item.quantity} €</p>
         </div>
         <div class="cart__item__content__settings">
         <div class="cart__item__content__settings__quantity">

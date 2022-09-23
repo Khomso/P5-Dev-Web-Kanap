@@ -41,7 +41,6 @@ fetch(`http://localhost:3000/api/products/${meubleId}`)
           quantity: Number(meubleQuantity),
           color: colorValue,
           itemId: meubleId,
-          price : meuble.price,
         });
       }
 
