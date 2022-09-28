@@ -30,8 +30,9 @@ fetch(`http://localhost:3000/api/products/${meubleId}`)
       const colorValue =
         meubleColorsSelect.options[meubleColorsSelect.selectedIndex].value;
 
+      // répérer un éléments dans le tableau avec la même couleur et même id
       const itemFound = cart.items.find((item) => {
-        return item.itemId === meubleId && item.color === colorValue; // répérer un éléments dans le tableau avec la même couleur 
+        return item.itemId === meubleId && item.color === colorValue;  
       });
 
       if (itemFound) {
@@ -44,9 +45,9 @@ fetch(`http://localhost:3000/api/products/${meubleId}`)
         });
       }
 
-      localStorage.setItem(cartLocalStorageKey, JSON.stringify(cart));
+      localStorage.setItem(cartLocalStorageKey, JSON.stringify(cart)); // mise a jour du local storage
     });
-
+    // on injecte les éléments dans le html
     meubleTitle.innerHTML = meuble.name;
     meubleDescription.innerHTML = meuble.description;
     meublePrice.innerHTML = meuble.price;
@@ -57,7 +58,7 @@ fetch(`http://localhost:3000/api/products/${meubleId}`)
     if (imageMeuble != null) {
       imageMeuble.append(imageDisplay);
     }
-
+    // methode for each pour créer l'option couleur
     colors.forEach((color) => {
       const option = document.createElement("option");
 

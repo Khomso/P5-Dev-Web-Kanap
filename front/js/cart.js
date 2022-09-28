@@ -27,7 +27,6 @@ function updatePriceBasket() {
   const totalQuantity = document.querySelector("#totalQuantity");
 
   cart.items.forEach((item) => {
-    // const totalUnitPrice = item.price * item.quantity;
     const totalUnitPrice = articlePriceById[item.id] * item.quantity; 
     total += totalUnitPrice;
     quantity += item.quantity;
@@ -64,7 +63,7 @@ function bindControls(item) {
         itemInCart.quantity = parseInt(evt.target.value, 10);
         // mise a jour de la valeur "quantity"
         quantityTextElt.innerHTML = `Qté : ${itemInCart.quantity}`;
-        // mettre a jour le prix
+        // mettre à jour le prix
         priceTextElt.innerHTML = `${
           articlePriceById[itemInCart.id] * itemInCart.quantity
         } €`;
@@ -73,8 +72,8 @@ function bindControls(item) {
         // mise a jour du prix du panier
         updatePriceBasket();
       });
+
       // suppression de l'éléments
-      //
       const deleteItemButton = element.querySelector(".deleteItem");
 
       deleteItemButton.addEventListener("click", (evt) => {
@@ -83,9 +82,8 @@ function bindControls(item) {
             cartItem.itemId !== itemInCart.itemId ||
             cartItem.color !== itemInCart.color // filtrage de l'élément à supprimer
         );
-        // cartItemDisplay.removeChild(element); // supression de l'élément dans l'interface
         element.remove(); // supression de l'élément dans l'interface
-        updateLocalStorage();
+        updateLocalStorage();// mise a jour du localstorage
         // mise a jour du prix du panier
         updatePriceBasket();
       });
@@ -102,10 +100,9 @@ if (cartItemDisplay) {
         const deleteItemButton = document.createElement("div");
 
         // on recupère le prix depuis l'article
-        // item.price = article.price
         articlePriceById[article.id] = article.price;
 
-        deleteItemButton.className = "cart__item__content__settings__delete";
+        deleteItemButton.className = "cart__item__content__settings__delete"; // attribut d'une class au bouton
         deleteItemButton.innerHTML = `<p class="deleteItem">Supprimer</p>`; // création button affichage
 
         itemDisplay.innerHTML = `
@@ -136,8 +133,8 @@ if (cartItemDisplay) {
         `;
         cartItemDisplay.appendChild(itemDisplay); // ajout de l'élément en cours
         bindControls(item); //liaison des contrôles de l'élement en cours
-        // mise a jour du prix du panier
-        updatePriceBasket();
+        
+        updatePriceBasket();// mise a jour du prix du panier
       });
   });
 }
@@ -155,6 +152,7 @@ orderButton.addEventListener("click", (evt) => {
 
   const form = document.querySelector(".cart__order__form"); // on cible le formulaire
 
+  // ensemble des functions permettant de vérifié les données utilisateur
   function controlFirstName() {
     const firstName = form.elements.firstName.value;
     if (/^[A-Za-z]{3,20}$/.test(firstName)) {
@@ -208,6 +206,7 @@ orderButton.addEventListener("click", (evt) => {
       return false;
     }
   }
+  // on vérifie que l'utilisateur met des données correct
   if (
     controlFirstName() &&
     controlLastName() &&
@@ -215,6 +214,7 @@ orderButton.addEventListener("click", (evt) => {
     controlCity() &&
     controlEmail()
   ) {
+    // on récupère des données saisie par l'utilisateur après contrôle
     const firstName = form.elements.firstName.value;
     const lastName = form.elements.lastName.value;
     const address = form.elements.address.value;
@@ -230,7 +230,7 @@ orderButton.addEventListener("click", (evt) => {
       },
       products: cart.items.map((item) => item.itemId),
     };
-
+    // méthode fetch pour poster les données du formulaire
     fetch("http://localhost:3000/api/products/order", {
       method: "POST",
       body: JSON.stringify(formBody),
@@ -241,7 +241,8 @@ orderButton.addEventListener("click", (evt) => {
       .then((res) => res.json())
       .then(
         (dataForm) =>
-          (window.location.href = `/front/html/confirmation.html?orderId=${dataForm.orderId}`)
+        // on envoie le client sur la page de confirmation
+          (window.location.href = `/front/html/confirmation.html?orderId=${dataForm.orderId}`) 
       );
   }
 });

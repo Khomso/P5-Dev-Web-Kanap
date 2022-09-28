@@ -1,7 +1,7 @@
 // gerer l'affichage et les interactions de la page accueil
 
 // méthode for each pour récup et injecter les articles sur la page acceuil
-fetch("http://localhost:3000/api/products")
+fetch("http://localhost:3000/api/products") 
   .then((res) => res.json())
   .then((data) => {
     const meubles = data; // on place les données dans une constante
